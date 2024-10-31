@@ -34,3 +34,5 @@
     service:
       name: chronyd
       state: restarted
+
+---
