@@ -1,0 +1,36 @@
+---
+- hosts: all
+  become: yes
+
+  tasks:
+  - name: Install chrony
+    apt:
+      name: chrony
+      state: present
+
+  - name: Enable chrony service
+    service:
+      name: chronyd
+      state: started
+      enabled: yes
+
+  - name: Set chrony servers
+    lineinfile:
+      path: /etc/chrony.conf
+      line: server {{ ntp_server }} iburst
+      state: present
+    with_items:
+      - ntp1.example.com
+      - ntp2.example.com
+      - ntp3.example.com
+
+  - name: Set chrony drift file
+    lineinfile:
+      path: /etc/chrony.conf
+      line: driftfile /var/lib/chrony/drift
+      state: present
+
+  - name: Restart chrony service
+    service:
+      name: chronyd
+      state: restarted
